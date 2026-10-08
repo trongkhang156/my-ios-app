@@ -26,7 +26,7 @@ jobs:
             -sdk iphoneos \
             -destination 'generic/platform=iOS' \
             -configuration Release \
-            -derivedDataPath build \
+            SYMROOT=build \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
@@ -35,7 +35,7 @@ jobs:
       - name: Package App to IPA
         run: |
           mkdir -p build/Payload
-          cp -R build/Build/Products/Release-iphoneos/*.app build/Payload/
+          cp -R build/Release-iphoneos/*.app build/Payload/
           cd build
           zip -r SimpleWebViewApp.ipa Payload
 
