@@ -1,0 +1,196 @@
+// $ANTLR 1-style PBXSyntax
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		11A111112222333300000001 /* SimpleWebViewAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A111112222333300000002 /* SimpleWebViewAppApp.swift */; };
+		11A111112222333300000003 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A111112222333300000004 /* ContentView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		11A111112222333300000000 /* SimpleWebViewApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleWebViewApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		11A111112222333300000002 /* SimpleWebViewAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleWebViewAppApp.swift; sourceTree = "<group>"; };
+		11A111112222333300000004 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		11A111112222333300000005 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		11A111112222333300000006 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		11A111112222333300000007 = {
+			isa = PBXGroup;
+			children = (
+				11A111112222333300000008 /* SimpleWebViewApp */,
+				11A111112222333300000009 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		11A111112222333300000008 /* SimpleWebViewApp */ = {
+			isa = PBXGroup;
+			children = (
+				11A111112222333300000002 /* SimpleWebViewAppApp.swift */,
+				11A111112222333300000004 /* ContentView.swift */,
+				11A111112222333300000005 /* Info.plist */,
+			);
+			path = SimpleWebViewApp;
+			sourceTree = "<group>";
+		};
+		11A111112222333300000009 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				11A111112222333300000000 /* SimpleWebViewApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		11A111112222333300000010 /* SimpleWebViewApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 11A111112222333300000011 /* Build configuration list for PBXNativeTarget "SimpleWebViewApp" */;
+			buildPhases = (
+				11A111112222333300000012 /* Sources */,
+				11A111112222333300000006 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SimpleWebViewApp;
+			productName = SimpleWebViewApp;
+			productReference = 11A111112222333300000000 /* SimpleWebViewApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		11A111112222333300000013 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					11A111112222333300000010 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = 11A111112222333300000014 /* Build configuration list for PBXProject "SimpleWebViewApp" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 11A111112222333300000007;
+			productRefGroup = 11A111112222333300000009 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				11A111112222333300000010 /* SimpleWebViewApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		11A111112222333300000012 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11A111112222333300000001 /* SimpleWebViewAppApp.swift in Sources */,
+				11A111112222333300000003 /* ContentView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		11A111112222333300000015 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = SimpleWebViewApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.SimpleWebViewApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		11A111112222333300000016 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = SimpleWebViewApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.SimpleWebViewApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		11A111112222333300000017 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		11A111112222333300000018 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		11A111112222333300000011 /* Build configuration list for PBXNativeTarget "SimpleWebViewApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				11A111112222333300000015 /* Debug */,
+				11A111112222333300000016 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		11A111112222333300000014 /* Build configuration list for PBXProject "SimpleWebViewApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				11A111112222333300000017 /* Debug */,
+				11A111112222333300000018 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 11A111112222333300000013 /* Project object */;
+}
