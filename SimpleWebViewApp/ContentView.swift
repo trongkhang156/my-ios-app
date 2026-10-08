@@ -14,23 +14,20 @@ struct WebView: UIViewRepresentable {
         config.mediaTypesRequiringUserActionForPlayback = []
         config.allowsAirPlayForMediaPlayback = true
 
-        // Chèn script ép video luôn chạy ở chế độ inline & vô hiệu hóa việc tạm dừng khi mất focus tab
+        // Script hỗ trợ ép video nhận diện PiP và điều khiển
         let script = """
         document.addEventListener('visibilitychange', function(e) { e.stopImmediatePropagation(); }, true);
         document.addEventListener('pagehide', function(e) { e.stopImmediatePropagation(); }, true);
-        Object.defineProperty(document, 'visibilityState', {value: 'visible', writable: true});
-        Object.defineProperty(document, 'hidden', {value: false, writable: true});
         
-        setInterval(function() {
-            var videos = document.querySelectorAll('video');
-            videos.forEach(function(v) {
-                v.setAttribute('playsinline', '');
-                v.setAttribute('webkit-playsinline', '');
-                if (v.paused && !v.ended && v.readyState > 2) {
-                    // Giữ trạng thái luôn sẵn sàng phát
+        // Hàm kích hoạt PiP tự động khi app xuống nền
+        window.triggerPiP = function() {
+            var video = document.querySelector('video');
+            if (video && !video.paused) {
+                if (video.webkitSetPresentationMode) {
+                    video.webkitSetPresentationMode('picture-in-picture');
                 }
-            });
-        }, 500);
+            }
+        };
         """
         let userScript = WKUserScript(source: script, injectionTime: .atDocumentStart, forMainFrameOnly: false)
         config.userContentController.addUserScript(userScript)
@@ -54,33 +51,30 @@ struct WebView: UIViewRepresentable {
 
 struct ContentView: View {
     @State private var webView: WKWebView? = nil
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         setupAudioSession()
         setupRemoteCommands()
     }
 
-    // Cấu hình Audio Session để giành quyền ưu tiên phát âm thanh nền trên CarPlay/iOS
     private func setupAudioSession() {
         do {
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(.playback, mode: .moviePlayback, options: [.mixWithOthers, .allowBluetooth, .allowBluetoothA2DP])
             try session.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
-            print("Không thể kích hoạt AudioSession: \(error)")
+            print("Lỗi AudioSession: \(error)")
         }
     }
 
-    // Kết nối các nút bấm trên vô lăng/màn hình ô tô (Play/Pause) với WebView YouTube
     private func setupRemoteCommands() {
         let commandCenter = MPRemoteCommandCenter.shared()
-        
         commandCenter.playCommand.isEnabled = true
         commandCenter.playCommand.addTarget { _ in
             self.webView?.evaluateJavaScript("document.querySelector('video')?.play()", completionHandler: nil)
             return .success
         }
-        
         commandCenter.pauseCommand.isEnabled = true
         commandCenter.pauseCommand.addTarget { _ in
             self.webView?.evaluateJavaScript("document.querySelector('video')?.pause()", completionHandler: nil)
@@ -90,7 +84,6 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Hiển thị YouTube WebView chiếm toàn màn hình
             WebView(url: URL(string: "https://www.youtube.com")!, webView: $webView)
                 .edgesIgnoringSafeArea(.top)
 
@@ -98,7 +91,6 @@ struct ContentView: View {
             HStack {
                 Spacer()
 
-                // Nút Trở về (Back)
                 Button(action: { webView?.goBack() }) {
                     Image(systemName: "chevron.backward")
                         .font(.title2)
@@ -107,7 +99,6 @@ struct ContentView: View {
 
                 Spacer()
 
-                // Nút Tiến (Forward)
                 Button(action: { webView?.goForward() }) {
                     Image(systemName: "chevron.forward")
                         .font(.title2)
@@ -116,7 +107,6 @@ struct ContentView: View {
 
                 Spacer()
 
-                // Nút Trang chủ YouTube (Home)
                 Button(action: {
                     let request = URLRequest(url: URL(string: "https://www.youtube.com")!)
                     webView?.load(request)
@@ -128,7 +118,6 @@ struct ContentView: View {
 
                 Spacer()
 
-                // Nút Tải lại (Reload)
                 Button(action: { webView?.reload() }) {
                     Image(systemName: "arrow.clockwise")
                         .font(.title2)
@@ -140,6 +129,12 @@ struct ContentView: View {
             .padding(.vertical, 10)
             .background(Color(UIColor.systemBackground))
             .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: -2)
+        }
+        // Bắt sự kiện khi app chuyển xuống nền (vuốt về Home / mở app khác)
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .background {
+                webView?.evaluateJavaScript("window.triggerPiP();", completionHandler: nil)
+            }
         }
     }
 }
