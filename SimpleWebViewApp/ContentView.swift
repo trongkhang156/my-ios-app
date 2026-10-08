@@ -14,20 +14,18 @@ struct WebView: UIViewRepresentable {
         config.mediaTypesRequiringUserActionForPlayback = []
         config.allowsAirPlayForMediaPlayback = true
 
-        // Script hỗ trợ ép video nhận diện PiP và điều khiển
+        // Script tối ưu hiển thị video inline trên mobile
         let script = """
         document.addEventListener('visibilitychange', function(e) { e.stopImmediatePropagation(); }, true);
         document.addEventListener('pagehide', function(e) { e.stopImmediatePropagation(); }, true);
         
-        // Hàm kích hoạt PiP tự động khi app xuống nền
-        window.triggerPiP = function() {
-            var video = document.querySelector('video');
-            if (video && !video.paused) {
-                if (video.webkitSetPresentationMode) {
-                    video.webkitSetPresentationMode('picture-in-picture');
-                }
-            }
-        };
+        setInterval(function() {
+            var videos = document.querySelectorAll('video');
+            videos.forEach(function(v) {
+                v.setAttribute('playsinline', '');
+                v.setAttribute('webkit-playsinline', '');
+            });
+        }, 1000);
         """
         let userScript = WKUserScript(source: script, injectionTime: .atDocumentStart, forMainFrameOnly: false)
         config.userContentController.addUserScript(userScript)
@@ -51,7 +49,6 @@ struct WebView: UIViewRepresentable {
 
 struct ContentView: View {
     @State private var webView: WKWebView? = nil
-    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         setupAudioSession()
@@ -129,12 +126,6 @@ struct ContentView: View {
             .padding(.vertical, 10)
             .background(Color(UIColor.systemBackground))
             .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: -2)
-        }
-        // Bắt sự kiện khi app chuyển xuống nền (vuốt về Home / mở app khác)
-        .onChange(of: scenePhase) { newPhase in
-            if newPhase == .background {
-                webView?.evaluateJavaScript("window.triggerPiP();", completionHandler: nil)
-            }
         }
     }
 }
