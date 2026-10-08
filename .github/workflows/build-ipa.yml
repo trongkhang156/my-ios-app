@@ -18,13 +18,14 @@ jobs:
         with:
           xcode-version: 'latest-stable'
 
-      - name: Build Xcode Archive
+      - name: Build Xcode App (Unsigned)
         run: |
-          xcodebuild archive \
+          xcodebuild build \
             -project SimpleWebViewApp.xcodeproj \
             -scheme SimpleWebViewApp \
             -sdk iphoneos \
-            -archivePath build/SimpleWebViewApp.xcarchive \
+            -configuration Release \
+            -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY=""
@@ -32,7 +33,7 @@ jobs:
       - name: Package App to IPA
         run: |
           mkdir -p build/Payload
-          cp -R build/SimpleWebViewApp.xcarchive/Products/Applications/*.app build/Payload/
+          cp -R build/Build/Products/Release-iphoneos/*.app build/Payload/
           cd build
           zip -r SimpleWebViewApp.ipa Payload
 
