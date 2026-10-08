@@ -1,42 +1,43 @@
 name: Build iOS IPA
+
 on:
-push:
-branches: [ "main", "master" ]
-workflow_dispatch:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
 
 jobs:
-build-ipa:
-runs-on: macos-latest
+  build-ipa:
+    runs-on: macos-latest
 
-steps:
-  - name: Checkout repository
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  - name: Select Xcode Version
-    uses: maxim-lobanov/setup-xcode@v1
-    with:
-      xcode-version: 'latest-stable'
+      - name: Select Xcode Version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 'latest-stable'
 
-  - name: Build Xcode Archive
-    run: |
-      xcodebuild archive \
-        -project SimpleWebViewApp.xcodeproj \
-        -scheme SimpleWebViewApp \
-        -sdk iphoneos \
-        -archivePath build/SimpleWebViewApp.xcarchive \
-        CODE_SIGNING_ALLOWED=NO \
-        CODE_SIGNING_REQUIRED=NO \
-        CODE_SIGN_IDENTITY=""
+      - name: Build Xcode Archive
+        run: |
+          xcodebuild archive \
+            -project SimpleWebViewApp.xcodeproj \
+            -scheme SimpleWebViewApp \
+            -sdk iphoneos \
+            -archivePath build/SimpleWebViewApp.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
 
-  - name: Package App to IPA
-    run: |
-      mkdir -p build/Payload
-      cp -R build/SimpleWebViewApp.xcarchive/Products/Applications/*.app build/Payload/
-      cd build
-      zip -r SimpleWebViewApp.ipa Payload
+      - name: Package App to IPA
+        run: |
+          mkdir -p build/Payload
+          cp -R build/SimpleWebViewApp.xcarchive/Products/Applications/*.app build/Payload/
+          cd build
+          zip -r SimpleWebViewApp.ipa Payload
 
-  - name: Upload IPA Artifact
-    uses: actions/upload-artifact@v4
-    with:
-      name: SimpleWebViewApp-IPA
-      path: build/SimpleWebViewApp.ipa
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SimpleWebViewApp-IPA
+          path: build/SimpleWebViewApp.ipa
