@@ -3,41 +3,63 @@ import WebKit
 import UIKit
 
 struct ContentView: View {
-    @State private var isBubbleActive = false
+    @State private var activeMapURL: String? = nil
 
     var body: some View {
         ZStack {
-            if isBubbleActive {
-                WebViewWrapper(url: URL(string: "https://maps.google.com")!)
+            // Khi đã chọn map, hiển thị WebView ngầm dưới bong bóng
+            if let urlString = activeMapURL, let url = URL(string: urlString) {
+                WebViewWrapper(url: url)
                     .edgesIgnoringSafeArea(.all)
             } else {
+                // Menu chọn ứng dụng
                 VStack(spacing: 20) {
                     Text("Chọn dịch vụ điều hướng")
                         .font(.title)
                         .fontWeight(.bold)
                     
-                    Button(action: {
-                        launchBubble()
-                    }) {
-                        Text("Khởi chạy VietMap (Bong bóng nổi)")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.orange)
-                            .cornerRadius(12)
+                    MapMenuButton(title: "Mở VietMap (Web)", color: .orange) {
+                        launchBubble(url: "https://maps.google.com") // Thay bằng link web VietMap thật của bạn
                     }
-                    .padding(.horizontal, 40)
+                    
+                    MapMenuButton(title: "Mở Google Maps (Web)", color: .blue) {
+                        launchBubble(url: "https://maps.google.com")
+                    }
+                    
+                    MapMenuButton(title: "Mở Waze (Web)", color: .cyan) {
+                        launchBubble(url: "https://www.waze.com/live-map/")
+                    }
                 }
             }
         }
     }
     
-    private func launchBubble() {
-        isBubbleActive = true
+    private func launchBubble(url: String) {
+        activeMapURL = url
         FloatingBubbleManager.shared.showBubble {
-            isBubbleActive = false
+            // Khi bấm nút X trên bong bóng, tắt WebView và quay lại menu
+            activeMapURL = nil
         }
+    }
+}
+
+// Nút bấm tùy chỉnh để làm menu
+struct MapMenuButton: View {
+    var title: String
+    var color: Color
+    var action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.white)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(color)
+                .cornerRadius(12)
+        }
+        .padding(.horizontal, 40)
     }
 }
 
@@ -56,7 +78,7 @@ struct WebViewWrapper: UIViewRepresentable {
     func updateUIView(_ uiView: WKWebView, context: Context) {}
 }
 
-// Trình quản lý Bong bóng nổi gộp chung vào đây để Xcode nhận diện được
+// Trình quản lý Bong bóng nổi trong app
 class FloatingBubbleManager {
     static let shared = FloatingBubbleManager()
     private var floatingWindow: UIWindow?
@@ -66,7 +88,6 @@ class FloatingBubbleManager {
         guard floatingWindow == nil else { return }
         onCloseCallback = onClose
 
-        // Lấy active scene của SwiftUI để gắn UIWindow (Bắt buộc cho iOS mới)
         guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene else { return }
 
         let window = UIWindow(windowScene: windowScene)
