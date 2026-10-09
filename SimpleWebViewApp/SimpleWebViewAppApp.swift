@@ -15,8 +15,9 @@ struct SimpleWebViewAppApp: App {
 
     private func setupAudioSession() {
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
-            try AVAudioSession.sharedInstance().setActive(true)
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback, mode: .moviePlayback, options: [.mixWithOthers])
+            try session.setActive(true)
         } catch {
             print("Lỗi Audio Session: \(error)")
         }
