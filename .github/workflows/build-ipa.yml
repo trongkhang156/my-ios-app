@@ -18,7 +18,7 @@ jobs:
         with:
           xcode-version: 'latest-stable'
 
-      - name: Generate Info.plist with Background Audio and Location
+      - name: Generate Info.plist
         run: |
           mkdir -p SimpleWebViewApp
           cat << 'EOF' > SimpleWebViewApp/Info.plist
@@ -46,16 +46,13 @@ jobs:
               <string>1</string>
               <key>LSRequiresIPhoneOS</key>
               <true/>
-              <key>UIBackgroundModes</key>
+              <key>LSApplicationQueriesSchemes</key>
               <array>
-                  <string>audio</string>
-                  <string>location</string>
-                  <string>fetch</string>
+                  <string>comgooglemaps</string>
+                  <string>maps</string>
+                  <string>vietmap</string>
+                  <string>waze</string>
               </array>
-              <key>NSLocationWhenInUseUsageDescription</key>
-              <string>Ứng dụng cần sử dụng GPS để theo dõi tốc độ trên bản đồ.</string>
-              <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-              <string>Ứng dụng cần duy trì GPS khi thu nhỏ thành bong bóng nổi.</string>
               <key>NSAppTransportSecurity</key>
               <dict>
                   <key>NSAllowsArbitraryLoads</key>
