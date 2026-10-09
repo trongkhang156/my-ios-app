@@ -31,11 +31,13 @@ jobs:
               <key>CFBundleExecutable</key>
               <string>$(EXECUTABLE_NAME)</string>
               <key>CFBundleIdentifier</key>
-              <string>com.example.SimpleWebViewApp</string>
+              <string>com.example.KBubble</string>
               <key>CFBundleInfoDictionaryVersion</key>
               <string>6.0</string>
               <key>CFBundleName</key>
-              <string>$(PRODUCT_NAME)</string>
+              <string>KBubble</string>
+              <key>CFBundleDisplayName</key>
+              <string>KBubble</string>
               <key>CFBundlePackageType</key>
               <string>APPL</string>
               <key>CFBundleShortVersionString</key>
@@ -82,10 +84,10 @@ jobs:
           mkdir -p build/Payload
           cp -R build/Release-iphoneos/*.app build/Payload/
           cd build
-          zip -r SimpleWebViewApp.ipa Payload
+          zip -r KBubble.ipa Payload
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SimpleWebViewApp-IPA
-          path: build/SimpleWebViewApp.ipa
+          name: KBubble-IPA
+          path: build/KBubble.ipa
