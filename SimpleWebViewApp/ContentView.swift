@@ -1,145 +1,79 @@
 import SwiftUI
-import WebKit
 import UIKit
 
 struct ContentView: View {
-    @State private var activeMapURL: String? = nil
+    @State private var alertMessage = ""
+    @State private var showAlert = false
 
     var body: some View {
-        ZStack {
-            // Khi đã chọn map, hiển thị WebView ngầm dưới bong bóng
-            if let urlString = activeMapURL, let url = URL(string: urlString) {
-                WebViewWrapper(url: url)
-                    .edgesIgnoringSafeArea(.all)
-            } else {
-                // Menu chọn ứng dụng
-                VStack(spacing: 20) {
-                    Text("Chọn dịch vụ điều hướng")
-                        .font(.title)
-                        .fontWeight(.bold)
-                    
-                    MapMenuButton(title: "Mở VietMap (Web)", color: .orange) {
-                        launchBubble(url: "https://maps.google.com") // Thay bằng link web VietMap thật của bạn
-                    }
-                    
-                    MapMenuButton(title: "Mở Google Maps (Web)", color: .blue) {
-                        launchBubble(url: "https://maps.google.com")
-                    }
-                    
-                    MapMenuButton(title: "Mở Waze (Web)", color: .cyan) {
-                        launchBubble(url: "https://www.waze.com/live-map/")
-                    }
-                }
+        VStack(spacing: 20) {
+            Text("Chọn ứng dụng điều hướng")
+                .font(.title2)
+                .fontWeight(.bold)
+                .padding(.top, 40)
+            
+            MapAppButton(title: "Mở Google Maps", color: .blue, iconName: "map.fill") {
+                openApp(urlScheme: "comgooglemaps://", fallbackAppStore: "https://apps.apple.com/app/id585027354")
             }
+            
+            MapAppButton(title: "Mở Apple Maps (Mặc định)", color: .green, iconName: "location.fill") {
+                openApp(urlScheme: "maps://", fallbackAppStore: "")
+            }
+            
+            MapAppButton(title: "Mở VietMap Live", color: .orange, iconName: "car.fill") {
+                openApp(urlScheme: "vietmap://", fallbackAppStore: "https://apps.apple.com/app/id1593339380")
+            }
+            
+            MapAppButton(title: "Mở Waze", color: .cyan, iconName: "arrow.triangle.turn.up.right.diamond.fill") {
+                openApp(urlScheme: "waze://", fallbackAppStore: "https://apps.apple.com/app/id323229106")
+            }
+
+            Spacer()
+        }
+        .padding()
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Thông báo"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
         }
     }
-    
-    private func launchBubble(url: String) {
-        activeMapURL = url
-        FloatingBubbleManager.shared.showBubble {
-            // Khi bấm nút X trên bong bóng, tắt WebView và quay lại menu
-            activeMapURL = nil
+
+    private func openApp(urlScheme: String, fallbackAppStore: String) {
+        guard let appURL = URL(string: urlScheme) else { return }
+        
+        if UIApplication.shared.canOpenURL(appURL) {
+            UIApplication.shared.open(appURL, options: [:], completionHandler: nil)
+        } else {
+            if !fallbackAppStore.isEmpty, let storeURL = URL(string: fallbackAppStore) {
+                UIApplication.shared.open(storeURL, options: [:], completionHandler: nil)
+            } else {
+                alertMessage = "Ứng dụng chưa được cài đặt trên thiết bị này."
+                showAlert = true
+            }
         }
     }
 }
 
-// Nút bấm tùy chỉnh để làm menu
-struct MapMenuButton: View {
+struct MapAppButton: View {
     var title: String
     var color: Color
+    var iconName: String
     var action: () -> Void
     
     var body: some View {
         Button(action: action) {
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.white)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(color)
-                .cornerRadius(12)
+            HStack {
+                Image(systemName: iconName)
+                    .font(.title2)
+                Text(title)
+                    .font(.headline)
+                Spacer()
+                Image(systemName: "chevron.right")
+            }
+            .foregroundColor(.white)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(color)
+            .cornerRadius(12)
         }
-        .padding(.horizontal, 40)
-    }
-}
-
-// Wrapper bọc WKWebView cho SwiftUI
-struct WebViewWrapper: UIViewRepresentable {
-    let url: URL
-
-    func makeUIView(context: Context) -> WKWebView {
-        let config = WKWebViewConfiguration()
-        config.allowsInlineMediaPlayback = true
-        let webView = WKWebView(frame: .zero, configuration: config)
-        webView.load(URLRequest(url: url))
-        return webView
-    }
-
-    func updateUIView(_ uiView: WKWebView, context: Context) {}
-}
-
-// Trình quản lý Bong bóng nổi trong app
-class FloatingBubbleManager {
-    static let shared = FloatingBubbleManager()
-    private var floatingWindow: UIWindow?
-    private var onCloseCallback: (() -> Void)?
-
-    func showBubble(onClose: @escaping () -> Void) {
-        guard floatingWindow == nil else { return }
-        onCloseCallback = onClose
-
-        guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene else { return }
-
-        let window = UIWindow(windowScene: windowScene)
-        window.frame = CGRect(x: 30, y: 150, width: 70, height: 70)
-        window.windowLevel = UIWindow.Level.alert + 100
-        window.backgroundColor = .clear
-        window.clipsToBounds = false
-
-        let vc = UIViewController()
-        let bubbleView = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
-        bubbleView.backgroundColor = UIColor.systemOrange
-        bubbleView.layer.cornerRadius = 30
-        bubbleView.layer.shadowColor = UIColor.black.cgColor
-        bubbleView.layer.shadowOpacity = 0.4
-        bubbleView.layer.shadowOffset = CGSize(width: 0, height: 4)
-        
-        let label = UILabel(frame: bubbleView.bounds)
-        label.text = "MAP"
-        label.textColor = .white
-        label.textAlignment = .center
-        label.font = UIFont.boldSystemFont(ofSize: 14)
-        bubbleView.addSubview(label)
-
-        let closeButton = UIButton(frame: CGRect(x: 40, y: -5, width: 25, height: 25))
-        closeButton.setTitle("✕", for: .normal)
-        closeButton.setTitleColor(.white, for: .normal)
-        closeButton.backgroundColor = .systemRed
-        closeButton.layer.cornerRadius = 12.5
-        closeButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
-        closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
-        
-        vc.view.addSubview(bubbleView)
-        vc.view.addSubview(closeButton)
-
-        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
-        window.addGestureRecognizer(panGesture)
-
-        window.rootViewController = vc
-        window.isHidden = false
-        floatingWindow = window
-    }
-
-    @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
-        guard let window = floatingWindow else { return }
-        let translation = gesture.translation(in: window)
-        window.center = CGPoint(x: window.center.x + translation.x, y: window.center.y + translation.y)
-        gesture.setTranslation(.zero, in: window)
-    }
-
-    @objc private func closeButtonTapped() {
-        floatingWindow?.isHidden = true
-        floatingWindow = nil
-        onCloseCallback?()
+        .padding(.horizontal, 20)
     }
 }
