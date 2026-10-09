@@ -18,7 +18,7 @@ jobs:
         with:
           xcode-version: 'latest-stable'
 
-      - name: Generate Info.plist
+      - name: Generate Info.plist with Background Audio Mode
         run: |
           mkdir -p SimpleWebViewApp
           cat << 'EOF' > SimpleWebViewApp/Info.plist
@@ -46,12 +46,9 @@ jobs:
               <string>1</string>
               <key>LSRequiresIPhoneOS</key>
               <true/>
-              <key>LSApplicationQueriesSchemes</key>
+              <key>UIBackgroundModes</key>
               <array>
-                  <string>comgooglemaps</string>
-                  <string>maps</string>
-                  <string>vietmap</string>
-                  <string>waze</string>
+                  <string>audio</string>
               </array>
               <key>NSAppTransportSecurity</key>
               <dict>
